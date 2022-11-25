@@ -2,7 +2,7 @@
 <p>
 <a href="https://packagist.org/packages/clntdev/scrubber"><img src="https://poser.pugx.org/clntdev/scrubber/version" alt="Stable Build" /></a>
 <a href="https://github.com/clnt/scrubber/actions"><img src="https://github.com/clnt/scrubber/actions/workflows/.github-actions.yml/badge.svg" alt="CI Status" /></a>
-<a href="https://codecov.io/gh/clnt/scrubber"><img src="https://codecov.io/gh/clnt/scrubber/branch/production/graph/badge.svg?token=XD5TG940EV" alt="Code Coverage"/></a>
+<a href="https://codecov.io/gh/clnt/scrubber"><img src="https://codecov.io/gh/clnt/scrubber/branch/production/graph/badge.svg?token=S2VO0QHCP8"/></a>
 </p>
 Scrubber is a minimal PHP package with only one dependency, it allows you to define a PHP configuration file which can help update database fields with various predefined or random values.
 
