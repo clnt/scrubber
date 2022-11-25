@@ -3,12 +3,12 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - production
       - dev
     tags:
       - 1.*
   pull_request:
-    branches: [ main ]
+    branches: [ production ]
 
   workflow_dispatch:
 
