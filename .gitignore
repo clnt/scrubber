@@ -1,0 +1,8 @@
+/coverage/
+/.idea/
+/.vscode/
+/vendor/
+/data/
+/.phpbench/
+*.cache
+.phpunit.result.cache
