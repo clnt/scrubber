@@ -5,6 +5,7 @@ namespace ClntDev\Scrubber\Tests\Unit\Util;
 use ClntDev\Scrubber\Exceptions\ValueNotFound;
 use ClntDev\Scrubber\Handlers\CallableHandler;
 use ClntDev\Scrubber\Handlers\FakerHandler;
+use ClntDev\Scrubber\Handlers\StringHandler;
 use ClntDev\Scrubber\Tests\TestCase;
 use ClntDev\Scrubber\Util\ConfigurationParser;
 
@@ -35,9 +36,13 @@ class ConfigurationParserTest extends TestCase
             FakerHandler::class,
             FakerHandler::class,
             CallableHandler::class,
+            FakerHandler::class,
+            FakerHandler::class,
+            FakerHandler::class,
+            StringHandler::class,
         ];
 
-        $this->assertCount(4, $result);
+        $this->assertCount(8, $result);
 
         for ($i = 0, $iMax = count($expectedHandlers); $i < $iMax; $i++) { //phpcs:ignore
             $this->assertInstanceOf($expectedHandlers[$i], $result[$i]);

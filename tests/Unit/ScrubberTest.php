@@ -44,7 +44,7 @@ class ScrubberTest extends TestCase
 
         $scrubber->run();
 
-        $this->assertCount(8, $this->database->entries);
+        $this->assertCount(16, $this->database->entries);
         $this->assertEquals([
             [
                 'table' => 'users',
@@ -102,6 +102,62 @@ class ScrubberTest extends TestCase
                 'primaryKeyValue' => 2,
                 'primaryKey' => 'id',
             ],
+            [
+                'table' => 'admins',
+                'field' => 'first_name',
+                'value' => 'Liza',
+                'primaryKeyValue' => 1,
+                'primaryKey' => 'id',
+            ],
+            [
+                'table' => 'admins',
+                'field' => 'first_name',
+                'value' => 'Presley',
+                'primaryKeyValue' => 2,
+                'primaryKey' => 'id',
+            ],
+            [
+                'table' => 'admins',
+                'field' => 'last_name',
+                'value' => 'Schulist',
+                'primaryKeyValue' => 1,
+                'primaryKey' => 'id',
+            ],
+            [
+                'table' => 'admins',
+                'field' => 'last_name',
+                'value' => 'Legros',
+                'primaryKeyValue' => 2,
+                'primaryKey' => 'id',
+            ],
+            [
+                'table' => 'admins',
+                'field' => 'email',
+                'value' => 'austin83@hotmail.com',
+                'primaryKeyValue' => 1,
+                'primaryKey' => 'id',
+            ],
+            [
+                'table' => 'admins',
+                'field' => 'email',
+                'value' => 'zhermiston@murphy.com',
+                'primaryKeyValue' => 2,
+                'primaryKey' => 'id',
+            ],
+            [
+                'table' => 'admins',
+                'field' => 'company',
+                'value' => 'string handler',
+                'primaryKeyValue' => 1,
+                'primaryKey' => 'id',
+            ],
+            [
+                'table' => 'admins',
+                'field' => 'company',
+                'value' => 'string handler',
+                'primaryKeyValue' => 2,
+                'primaryKey' => 'id',
+            ],
         ], $this->database->entries);
     }
 
@@ -139,6 +195,9 @@ class ScrubberTest extends TestCase
                 'first_name',
                 'last_name',
                 'email',
+                'first_name',
+                'last_name',
+                'email',
             ],
             $scrubber->getFieldList('pid')
         );
@@ -150,7 +209,7 @@ class ScrubberTest extends TestCase
         $scrubber = Scrubber::make($this->configPath, $this->database, $this->logger);
 
         $this->assertEquals(
-            'first_name,last_name,email',
+            'first_name,last_name,email,first_name,last_name,email',
             $scrubber->getFieldListAsString('pid')
         );
     }

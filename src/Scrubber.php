@@ -50,10 +50,10 @@ class Scrubber
 
     public function getFieldList(string $type = 'pid'): array
     {
-        return array_filter(array_map(
+        return array_values(array_filter(array_map(
             static fn (Handler $handler): ?string => $handler->getType() === $type ? $handler->getField() : null,
             array_values($this->parser->parse())
-        ));
+        )));
     }
 
     public function getFieldListAsString(string $type = 'pid'): string

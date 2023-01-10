@@ -24,17 +24,11 @@ class ConfigurationParser
 
     public function parse(): array
     {
-        $parsed = array_map(
+        return array_merge(...array_map(
             fn (string $table, array $fields) => $this->mapFields($table, $fields),
             array_keys($this->config),
             array_values($this->config)
-        );
-
-        if (isset($parsed[0]) && count($parsed[0]) > 0) {
-            return $parsed[0];
-        }
-
-        return [];
+        ));
     }
 
     private function mapFields(string $table, array $fields): array
