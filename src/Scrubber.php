@@ -63,13 +63,17 @@ class Scrubber
 
     protected function runHandler(Handler $handler): void
     {
-        foreach ($this->database->fetch($handler->getTable(), $handler->getPrimaryKey()) as $primaryKeyValue) {
+        foreach ($this->database->fetch($handler->getTable(), $handler->getPrimaryKey()) as $primaryKeyValues) {
+            if ($handler->getPrimaryKey()->isComposite() && is_array($primaryKeyValues) === false) {
+                throw new Exceptions\TryingToUseCompositeKeyAsSingleKey($handler->getTable(), $handler->getField());
+            }
+
             $this->database->update(
                 $handler->getTable(),
                 $handler->getField(),
                 $handler->handle(),
-                $primaryKeyValue,
-                $handler->getPrimaryKey()
+                $primaryKeyValues,
+                $handler->getPrimaryKey(),
             );
         }
     }

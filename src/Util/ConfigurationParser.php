@@ -2,6 +2,7 @@
 
 namespace ClntDev\Scrubber\Util;
 
+use ClntDev\Scrubber\DatabaseKey;
 use ClntDev\Scrubber\Exceptions\ValueNotFound;
 use ClntDev\Scrubber\Handlers\Handler;
 
@@ -56,7 +57,8 @@ class ConfigurationParser
             $table,
             $field,
             $fieldData['value'],
-            $fieldData['primary_key'] ?? 'id',
+            $fieldData['seed'] ?? 'scrubber',
+            DatabaseKey::createFromConfig($fieldData['primary_key'] ?? 'id'),
             $fieldData['type'] ?? null
         );
     }
