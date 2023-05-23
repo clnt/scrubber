@@ -7,6 +7,8 @@ use ClntDev\Scrubber\Contracts\Logger;
 use ClntDev\Scrubber\Exceptions\ValueNotFound;
 use ClntDev\Scrubber\Scrubber;
 use ClntDev\Scrubber\Tests\Support\Fakes\Database;
+use ClntDev\Scrubber\Tests\Support\Fakes\DatabaseThatIgnoresCompositeKeys;
+use ClntDev\Scrubber\Tests\Support\Fakes\DatabaseThatReturnsIncorrectNumberOfPrimaryValues;
 use ClntDev\Scrubber\Tests\TestCase;
 
 class ScrubberTest extends TestCase
@@ -44,12 +46,12 @@ class ScrubberTest extends TestCase
 
         $scrubber->run();
 
-        $this->assertCount(16, $this->database->entries);
+        $this->assertCount(18, $this->database->entries);
         $this->assertEquals([
             [
                 'table' => 'users',
                 'field' => 'first_name',
-                'value' => 'Keyshawn',
+                'value' => 'Khalid',
                 'primaryKeyValue' => 1,
                 'primaryKey' => ['id'],
             ],
@@ -84,7 +86,7 @@ class ScrubberTest extends TestCase
             [
                 'table' => 'users',
                 'field' => 'email',
-                'value' => 'brandon05@gmail.com',
+                'value' => 'brannon05@gmail.com',
                 'primaryKeyValue' => 2,
                 'primaryKey' => ['id'],
             ],
@@ -133,7 +135,7 @@ class ScrubberTest extends TestCase
             [
                 'table' => 'admins',
                 'field' => 'email',
-                'value' => 'austin83@hotmail.com',
+                'value' => 'avery83@hotmail.com',
                 'primaryKeyValue' => 1,
                 'primaryKey' => ['id'],
             ],
@@ -157,6 +159,20 @@ class ScrubberTest extends TestCase
                 'value' => 'string handler',
                 'primaryKeyValue' => 2,
                 'primaryKey' => ['id'],
+            ],
+            [
+                'table' => 'composite_table',
+                'field' => 'composite_field',
+                'value' => 'string handler',
+                'primaryKeyValue' => [1, 1, 1, 1],
+                'primaryKey' => ['entity_id', 'deleted', 'delta', 'langcode'],
+            ],
+            [
+                'table' => 'composite_table',
+                'field' => 'composite_field',
+                'value' => 'string handler',
+                'primaryKeyValue' => [2, 2, 2, 2],
+                'primaryKey' => ['entity_id', 'deleted', 'delta', 'langcode'],
             ],
         ], $this->database->entries);
     }
@@ -183,6 +199,36 @@ class ScrubberTest extends TestCase
             $this->database,
             $this->logger
         )->run();
+    }
+
+    /** @test */
+    public function rejected_if_the_database_responds_with_invalid_values_for_a_composite_key(): void
+    {
+        Scrubber::make(
+            __DIR__ . '/../Support/config-composite.php',
+            new DatabaseThatIgnoresCompositeKeys(),
+            $this->logger
+        )->run();
+
+        $this->assertEquals(<<<EOM
+        The configuration file indicates composite_field.composite_table has a composite
+        primary key. but the database did not return an array (1).
+        EOM, $this->logger->getLastEntry());
+    }
+
+    /** @test */
+    public function rejected_if_the_database_responds_with_wrong_num_of_values_for_composite_key(): void
+    {
+        Scrubber::make(
+            __DIR__ . '/../Support/config-composite.php',
+            new DatabaseThatReturnsIncorrectNumberOfPrimaryValues(),
+            $this->logger
+        )->run();
+
+        $this->assertEquals(<<<EOM
+        The configuration file indicates composite_field.composite_table has a composite
+        primary key with 4 columns, but the database fetched 12 values.
+        EOM, $this->logger->getLastEntry());
     }
 
     /** @test */

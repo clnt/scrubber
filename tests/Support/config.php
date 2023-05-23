@@ -41,4 +41,10 @@ return [
             'value' => 'string handler',
         ],
     ],
+    'composite_table' => [
+        'composite_field' => [
+            'primary_key' => ['entity_id', 'deleted', 'delta', 'langcode'],
+            'value' => 'string handler',
+        ],
+    ],
 ];

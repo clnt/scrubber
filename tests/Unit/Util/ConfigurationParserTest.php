@@ -42,7 +42,7 @@ class ConfigurationParserTest extends TestCase
             StringHandler::class,
         ];
 
-        $this->assertCount(8, $result);
+        $this->assertCount(9, $result);
 
         for ($i = 0, $iMax = count($expectedHandlers); $i < $iMax; $i++) { //phpcs:ignore
             $this->assertInstanceOf($expectedHandlers[$i], $result[$i]);

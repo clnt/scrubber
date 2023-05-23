@@ -16,6 +16,13 @@ class Database implements DatabaseUpdate
 
     public function fetch(string $table, DatabaseKey $primaryKey): array //phpcs:ignore
     {
+        print 'ARG: ' . $table;
+        if ($primaryKey->isComposite()) {
+            return [
+                [1, 1, 1, 1],
+                [2, 2, 2, 2],
+            ];
+        }
         return [1, 2];
     }
 
@@ -35,16 +42,5 @@ class Database implements DatabaseUpdate
         ];
 
         return true;
-    }
-
-    public function hasEntry(string $table, string $field, mixed $value, string|int $primaryKeyValue): array
-    {
-        return array_filter($this->entries, static fn (array $entry): bool => $entry === [
-            'table' => $table,
-            'field' => $field,
-            'value' => $value,
-            'primaryKeyValue' => $primaryKeyValue,
-            'primaryKey' => 'id',
-        ]);
     }
 }

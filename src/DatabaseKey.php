@@ -19,7 +19,12 @@ class DatabaseKey implements Contracts\DatabaseKey
 
     public function isComposite(): bool
     {
-        return count($this->columnNames) > 1;
+        return $this->count() > 1;
+    }
+
+    public function count(): int
+    {
+        return count($this->columnNames);
     }
 
     public function getNames(): array
