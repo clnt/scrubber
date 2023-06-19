@@ -63,13 +63,34 @@ class Scrubber
 
     protected function runHandler(Handler $handler): void
     {
-        foreach ($this->database->fetch($handler->getTable(), $handler->getPrimaryKey()) as $primaryKeyValue) {
+        foreach ($this->database->fetch($handler->getTable(), $handler->getPrimaryKey()) as $primaryKeyValues) {
+            $primaryKey = $handler->getPrimaryKey();
+
+            if ($primaryKey->isComposite()) {
+                if (is_array($primaryKeyValues) === false) {
+                    throw new Exceptions\CompositePrimaryKeyError(<<<EOM
+                    The configuration file indicates {$handler->getTable()}.{$handler->getField()} has a composite
+                    primary key. but the database did not return an array ({$primaryKeyValues}).
+                    EOM);
+                }
+
+                $primaryKeyCount = $primaryKey->count();
+                $valueCount = count($primaryKeyValues);
+
+                if ($primaryKeyCount !== $valueCount) {
+                    throw new Exceptions\CompositePrimaryKeyError(<<<EOM
+                    The configuration file indicates {$handler->getTable()}.{$handler->getField()} has a composite
+                    primary key with {$primaryKeyCount} columns, but the database fetched {$valueCount} values.
+                    EOM);
+                }
+            }
+
             $this->database->update(
                 $handler->getTable(),
                 $handler->getField(),
                 $handler->handle(),
-                $primaryKeyValue,
-                $handler->getPrimaryKey()
+                $primaryKeyValues,
+                $handler->getPrimaryKey(),
             );
         }
     }

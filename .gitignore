@@ -6,3 +6,4 @@
 /.phpbench/
 *.cache
 .phpunit.result.cache
+composer.lock

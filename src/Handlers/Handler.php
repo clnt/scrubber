@@ -2,7 +2,9 @@
 
 namespace ClntDev\Scrubber\Handlers;
 
+use ClntDev\Scrubber\Contracts\DatabaseKey;
 use ClntDev\Scrubber\Contracts\DataHandler;
+use ClntDev\Scrubber\DatabaseKey as ScrubberDatabaseKey;
 use Faker\Factory as Faker;
 use Faker\Generator;
 
@@ -14,7 +16,7 @@ abstract class Handler implements DataHandler
 
     public mixed $input;
 
-    public string $primaryKey;
+    public DatabaseKey $primaryKey;
 
     public ?string $type;
 
@@ -24,14 +26,14 @@ abstract class Handler implements DataHandler
         string $table,
         string $field,
         mixed $input,
-        string $primaryKey = 'id',
+        string $seed = 'scrubber',
+        ?DatabaseKey $primaryKey = null,
         ?string $type = null,
-        string $seed = 'scrubber'
     ) {
         $this->table = $table;
         $this->field = $field;
         $this->input = $input;
-        $this->primaryKey = $primaryKey;
+        $this->primaryKey = $primaryKey ?? ScrubberDatabaseKey::createFromConfig('id');
         $this->type = $type;
         $this->faker = Faker::create();
         $this->faker->seed($seed);
@@ -49,7 +51,7 @@ abstract class Handler implements DataHandler
         return $this->field;
     }
 
-    public function getPrimaryKey(): string
+    public function getPrimaryKey(): DatabaseKey
     {
         return $this->primaryKey;
     }

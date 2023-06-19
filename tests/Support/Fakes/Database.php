@@ -2,6 +2,7 @@
 
 namespace ClntDev\Scrubber\Tests\Support\Fakes;
 
+use ClntDev\Scrubber\Contracts\DatabaseKey;
 use ClntDev\Scrubber\Contracts\DatabaseUpdate;
 
 class Database implements DatabaseUpdate
@@ -13,8 +14,15 @@ class Database implements DatabaseUpdate
         $this->entries = [];
     }
 
-    public function fetch(string $table, string $primaryKey): array //phpcs:ignore
+    public function fetch(string $table, DatabaseKey $primaryKey): array //phpcs:ignore
     {
+        if ($primaryKey->isComposite()) {
+            return [
+                [1, 1, 1, 1],
+                [2, 2, 2, 2],
+            ];
+        }
+
         return [1, 2];
     }
 
@@ -22,28 +30,17 @@ class Database implements DatabaseUpdate
         string $table,
         string $field,
         mixed $value,
-        string|int $primaryKeyValue,
-        string $primaryKey = 'id'
+        string|int|array $primaryKeyValue,
+        DatabaseKey $primaryKey
     ): bool {
         $this->entries[] = [
             'table' => $table,
             'field' => $field,
             'value' => $value,
             'primaryKeyValue' => $primaryKeyValue,
-            'primaryKey' => $primaryKey,
+            'primaryKey' => $primaryKey->getNames(),
         ];
 
         return true;
-    }
-
-    public function hasEntry(string $table, string $field, mixed $value, string|int $primaryKeyValue): array
-    {
-        return array_filter($this->entries, static fn (array $entry): bool => $entry === [
-            'table' => $table,
-            'field' => $field,
-            'value' => $value,
-            'primaryKeyValue' => $primaryKeyValue,
-            'primaryKey' => 'id',
-        ]);
     }
 }

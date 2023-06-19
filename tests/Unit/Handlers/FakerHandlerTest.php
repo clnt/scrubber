@@ -5,10 +5,13 @@ namespace ClntDev\Scrubber\Tests\Handlers;
 use ClntDev\Scrubber\Handlers\FakerHandler;
 use ClntDev\Scrubber\Tests\TestCase;
 use Faker\Factory as Faker;
+use Faker\Generator as FakerGenerator;
 use Throwable;
 
 class FakerHandlerTest extends TestCase
 {
+    public ?FakerGenerator $faker = null;
+
     protected function setUp(): void
     {
         $this->faker = Faker::create();
