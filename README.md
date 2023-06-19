@@ -51,6 +51,12 @@ return [
             'value' => static fn (): bool => true,
         ],
     ],
+    'composite_table' => [
+        'composite_field' => [
+            'primary_key' => ['entity_id', 'deleted', 'delta', 'langcode'],
+            'value' => 'string handler',
+        ],
+    ],
 ];
 ```
 
