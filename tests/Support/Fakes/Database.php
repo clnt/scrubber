@@ -16,13 +16,13 @@ class Database implements DatabaseUpdate
 
     public function fetch(string $table, DatabaseKey $primaryKey): array //phpcs:ignore
     {
-        print 'ARG: ' . $table;
         if ($primaryKey->isComposite()) {
             return [
                 [1, 1, 1, 1],
                 [2, 2, 2, 2],
             ];
         }
+
         return [1, 2];
     }
 

@@ -3,7 +3,6 @@
 namespace ClntDev\Scrubber\Tests\Unit;
 
 use ClntDev\Scrubber\Contracts\DatabaseUpdate;
-use ClntDev\Scrubber\Contracts\Logger;
 use ClntDev\Scrubber\Exceptions\ValueNotFound;
 use ClntDev\Scrubber\Scrubber;
 use ClntDev\Scrubber\Tests\Support\Fakes\Database;
@@ -14,8 +13,6 @@ use ClntDev\Scrubber\Tests\TestCase;
 class ScrubberTest extends TestCase
 {
     protected DatabaseUpdate $database;
-
-    protected Logger $logger;
 
     protected string $configPath;
 

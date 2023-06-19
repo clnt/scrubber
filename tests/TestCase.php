@@ -8,6 +8,10 @@ use PHPUnit\Framework\TestCase as PHPUnit;
 
 class TestCase extends PHPUnit
 {
+    public ?HandlerFactory $handlerFactory = null;
+
+    public ?Log $logger = null;
+
     protected function setUp(): void
     {
         $this->handlerFactory = new HandlerFactory();
