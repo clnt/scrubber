@@ -8,9 +8,9 @@ interface DataHandler
         string $table,
         string $field,
         mixed $input,
-        string $seed = 'scrubber',
         ?DatabaseKey $primaryKey = null,
         ?string $type = null,
+        string $seed = 'scrubber',
     );
 
     public function handle(); //phpcs:ignore

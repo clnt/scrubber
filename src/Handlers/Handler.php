@@ -26,9 +26,9 @@ abstract class Handler implements DataHandler
         string $table,
         string $field,
         mixed $input,
-        string $seed = 'scrubber',
         ?DatabaseKey $primaryKey = null,
         ?string $type = null,
+        string $seed = 'scrubber',
     ) {
         $this->table = $table;
         $this->field = $field;

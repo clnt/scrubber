@@ -57,9 +57,9 @@ class ConfigurationParser
             $table,
             $field,
             $fieldData['value'],
-            $fieldData['seed'] ?? 'scrubber',
             DatabaseKey::createFromConfig($fieldData['primary_key'] ?? 'id'),
-            $fieldData['type'] ?? null
+            $fieldData['type'] ?? null,
+            $fieldData['seed'] ?? 'scrubber'
         );
     }
 }
