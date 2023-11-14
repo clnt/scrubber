@@ -1,12 +1,12 @@
 <?php
 
-namespace ClntDev\Scrubber\Handlers;
+namespace ClntDev\Scrubber\DataHandlers;
 
 use RuntimeException;
 
 class ArrayHandler extends Handler
 {
-    public function handle(): string|bool
+    public function getValue(): string|bool
     {
         if (is_array($this->input) === false) {
             throw new RuntimeException(

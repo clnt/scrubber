@@ -1,12 +1,12 @@
 <?php
 
-namespace ClntDev\Scrubber\Handlers;
+namespace ClntDev\Scrubber\DataHandlers;
 
 use RuntimeException;
 
 class CallableHandler extends Handler
 {
-    public function handle(): ?string
+    public function getValue(): ?string
     {
         if (is_callable($this->input) === false) {
             throw new RuntimeException('CallableHandler input is not callable');

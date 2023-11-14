@@ -1,12 +1,12 @@
 <?php
 
-namespace ClntDev\Scrubber\Handlers;
+namespace ClntDev\Scrubber\DataHandlers;
 
 use RuntimeException;
 
 class StringHandler extends Handler
 {
-    public function handle(): ?string
+    public function getValue(): ?string
     {
         if (is_string($this->input) === false && is_int($this->input) === false) {
             throw new RuntimeException(

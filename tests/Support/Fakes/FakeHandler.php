@@ -2,11 +2,11 @@
 
 namespace ClntDev\Scrubber\Tests\Support\Fakes;
 
-use ClntDev\Scrubber\Handlers\Handler;
+use ClntDev\Scrubber\DataHandlers\Handler;
 
 class FakeHandler extends Handler
 {
-    public function handle(): string //phpcs:ignore
+    public function getValue(): string //phpcs:ignore
     {
         return 'fake-handler';
     }

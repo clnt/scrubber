@@ -3,24 +3,25 @@
 namespace ClntDev\Scrubber\Tests\Unit\Util;
 
 use ClntDev\Scrubber\Exceptions\HandlerNotFound;
-use ClntDev\Scrubber\Handlers\ArrayHandler;
-use ClntDev\Scrubber\Handlers\CallableHandler;
-use ClntDev\Scrubber\Handlers\FakerHandler;
-use ClntDev\Scrubber\Handlers\IntegerHandler;
-use ClntDev\Scrubber\Handlers\ObjectHandler;
-use ClntDev\Scrubber\Handlers\StringHandler;
+use ClntDev\Scrubber\DataHandlers\ArrayHandler;
+use ClntDev\Scrubber\DataHandlers\CallableHandler;
+use ClntDev\Scrubber\DataHandlers\FakerHandler;
+use ClntDev\Scrubber\DataHandlers\IntegerHandler;
+use ClntDev\Scrubber\DataHandlers\ObjectHandler;
+use ClntDev\Scrubber\DataHandlers\StringHandler;
+use ClntDev\Scrubber\ScrubHandlers\Update;
 use ClntDev\Scrubber\Tests\Support\Fakes\FakeHandler;
 use ClntDev\Scrubber\Tests\Support\Fakes\InvalidTestObject;
 use ClntDev\Scrubber\Tests\TestCase;
-use ClntDev\Scrubber\Util\HandlerRegistry;
+use ClntDev\Scrubber\Util\SelfDetectingHandlerRegistry;
 
-class HandlerRegistryTest extends TestCase
+class SelfDetectingHandlerRegistryTest extends TestCase
 {
-    protected HandlerRegistry $registry;
+    protected SelfDetectingHandlerRegistry $registry;
 
     protected function setUp(): void
     {
-        $this->registry = new HandlerRegistry;
+        $this->registry = SelfDetectingHandlerRegistry::makeForDataHandlers();
 
         parent::setUp();
     }
@@ -35,6 +36,18 @@ class HandlerRegistryTest extends TestCase
             StringHandler::class,
             IntegerHandler::class,
             ArrayHandler::class,
+        ];
+
+        $this->assertEquals($expectedHandlers, $this->registry->getHandlers());
+    }
+
+    /** @test */
+    public function it_populates_handlers_with_all_expected_scrub_handlers(): void
+    {
+        $this->registry = SelfDetectingHandlerRegistry::makeForScrubHandlers();
+
+        $expectedHandlers = [
+            Update::class,
         ];
 
         $this->assertEquals($expectedHandlers, $this->registry->getHandlers());

@@ -2,7 +2,7 @@
 
 namespace ClntDev\Scrubber\Tests\Handlers;
 
-use ClntDev\Scrubber\Handlers\IntegerHandler;
+use ClntDev\Scrubber\DataHandlers\IntegerHandler;
 use ClntDev\Scrubber\Tests\TestCase;
 use Throwable;
 
@@ -13,7 +13,7 @@ class IntegerHandlerTest extends TestCase
     {
         $handler = $this->handlerFactory->create(IntegerHandler::class, '1');
 
-        $this->assertEquals(1, $handler->handle());
+        $this->assertEquals(1, $handler->getValue());
     }
 
     /** @test */
@@ -22,7 +22,7 @@ class IntegerHandlerTest extends TestCase
         $handler = $this->handlerFactory->create(IntegerHandler::class, ['one', 'two']);
 
         try {
-            $handler->handle();
+            $handler->getValue();
         } catch (Throwable $exception) {
             $this->assertEquals('IntegerHandler input is not numeric, array given', $exception->getMessage());
             return;

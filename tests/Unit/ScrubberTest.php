@@ -2,8 +2,8 @@
 
 namespace ClntDev\Scrubber\Tests\Unit;
 
-use ClntDev\Scrubber\Contracts\DatabaseUpdate;
-use ClntDev\Scrubber\Exceptions\ValueNotFound;
+use ClntDev\Scrubber\Contracts\DatabaseHandler;
+use ClntDev\Scrubber\Exceptions\HandlerNotFound;
 use ClntDev\Scrubber\Scrubber;
 use ClntDev\Scrubber\Tests\Support\Fakes\Database;
 use ClntDev\Scrubber\Tests\Support\Fakes\DatabaseThatIgnoresCompositeKeys;
@@ -12,7 +12,7 @@ use ClntDev\Scrubber\Tests\TestCase;
 
 class ScrubberTest extends TestCase
 {
-    protected DatabaseUpdate $database;
+    protected DatabaseHandler $database;
 
     protected string $configPath;
 
@@ -189,7 +189,7 @@ class ScrubberTest extends TestCase
     /** @test */
     public function an_exception_is_thrown_if_the_config_is_invalid_on_run(): void
     {
-        $this->expectException(ValueNotFound::class);
+        $this->expectException(HandlerNotFound::class);
 
         Scrubber::make(
             __DIR__ . '/../Support/config-invalid.php',
@@ -254,6 +254,61 @@ class ScrubberTest extends TestCase
         $this->assertEquals(
             'first_name,last_name,email,first_name,last_name,email',
             $scrubber->getFieldListAsString('pid')
+        );
+    }
+
+    /** @test */
+    public function deletes_rows_that_match_field_value(): void
+    {
+        $this->markTestSkipped();
+        Scrubber::make(
+            __DIR__ . '/../Support/config-delete-matching-rows.php',
+            $this->database,
+            $this->logger
+        )->run();
+
+        $this->assertNotEmpty($this->database->deletedEntries);
+    }
+
+    /** @test */
+    public function truncates_table(): void
+    {
+        Scrubber::make(
+            __DIR__ . '/../Support/config-truncate.php',
+            $this->database,
+            $this->logger
+        )->run();
+
+        $this->assertNotEmpty($this->database->truncatedEntries);
+    }
+
+    /** @test */
+    public function gets_ignored_tables(): void
+    {
+        $scrubber = Scrubber::make(
+            __DIR__ . '/../Support/config-ignore.php',
+            $this->database,
+            $this->logger
+        );
+
+        $this->assertEquals(
+            ['users'],
+            $scrubber->getIgnoredTableList()
+        );
+    }
+
+    /** @test */
+    public function gets_all_tables(): void
+    {
+        $scrubber = Scrubber::make(
+            __DIR__ . '/../Support/config-ignore.php',
+            $this->database,
+            $this->logger
+        );
+
+        $this->assertEquals(
+            ['not_ignored1', 'not_ignored2', 'users'],
+            $scrubber->getTableList()
         );
     }
 }

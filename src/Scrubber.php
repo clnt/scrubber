@@ -2,9 +2,9 @@
 
 namespace ClntDev\Scrubber;
 
-use ClntDev\Scrubber\Contracts\DatabaseUpdate;
+use ClntDev\Scrubber\Contracts\DatabaseHandler;
 use ClntDev\Scrubber\Contracts\Logger;
-use ClntDev\Scrubber\Handlers\Handler;
+use ClntDev\Scrubber\Contracts\ScrubHandler;
 use ClntDev\Scrubber\Util\ConfigurationParser;
 use Throwable;
 
@@ -12,13 +12,13 @@ class Scrubber
 {
     private ConfigurationParser $parser;
 
-    private DatabaseUpdate $database;
+    private DatabaseHandler $database;
 
     private Logger $logger;
 
     public function __construct(
         string $configPath,
-        DatabaseUpdate $database,
+        DatabaseHandler $database,
         Logger $logger
     ) {
         $this->database = $database;
@@ -26,18 +26,18 @@ class Scrubber
         $this->parser = ConfigurationParser::make($configPath);
     }
 
-    public static function make(string $configPath, DatabaseUpdate $database, Logger $logger): self
+    public static function make(string $configPath, DatabaseHandler $database, Logger $logger): self
     {
         return new self($configPath, $database, $logger);
     }
 
     public function run(): bool
     {
-        $handlers = $this->parser->parse();
+        $scrubHandlers = $this->parser->parse();
 
         try {
-            foreach ($handlers as $handler) {
-                $this->runHandler($handler);
+            foreach ($scrubHandlers as $scrubHandler) {
+                $this->runHandler($scrubHandler);
             }
         } catch (Throwable $exception) {
             $this->logger->log($exception);
@@ -48,10 +48,20 @@ class Scrubber
         return true;
     }
 
+    public function getTableList(): array
+    {
+        return $this->parser->parseTables();
+    }
+
+    public function getIgnoredTableList(): array
+    {
+        return $this->parser->parseTables(false);
+    }
+
     public function getFieldList(string $type = 'pid'): array
     {
         return array_values(array_filter(array_map(
-            static fn (Handler $handler): ?string => $handler->getType() === $type ? $handler->getField() : null,
+            static fn (ScrubHandler $handler): ?string => $handler->getType() === $type ? $handler->getField() : null,
             array_values($this->parser->parse())
         )));
     }
@@ -61,37 +71,42 @@ class Scrubber
         return implode(',', $this->getFieldList($type));
     }
 
-    protected function runHandler(Handler $handler): void
+    protected function runHandler(ScrubHandler $handler): void
     {
-        foreach ($this->database->fetch($handler->getTable(), $handler->getPrimaryKey()) as $primaryKeyValues) {
-            $primaryKey = $handler->getPrimaryKey();
+        foreach ($this->database->fetch(
+            $handler->getTable(),
+            $handler->getPrimaryKey()
+        ) as $primaryKeyValues) {
+            $this->validatePrimaryKeyValues($handler, $primaryKeyValues);
+            $handler->scrub($primaryKeyValues, $this->database);
+        }
+    }
 
-            if ($primaryKey->isComposite()) {
-                if (is_array($primaryKeyValues) === false) {
-                    throw new Exceptions\CompositePrimaryKeyError(<<<EOM
-                    The configuration file indicates {$handler->getTable()}.{$handler->getField()} has a composite
-                    primary key. but the database did not return an array ({$primaryKeyValues}).
-                    EOM);
-                }
+    protected function validatePrimaryKeyValues(
+        ScrubHandler $handler,
+        mixed $primaryKeyValues
+    ): void {
+        $primaryKey = $handler->getPrimaryKey();
 
-                $primaryKeyCount = $primaryKey->count();
-                $valueCount = count($primaryKeyValues);
+        if ($primaryKey->isComposite() === false) {
+            return;
+        }
 
-                if ($primaryKeyCount !== $valueCount) {
-                    throw new Exceptions\CompositePrimaryKeyError(<<<EOM
-                    The configuration file indicates {$handler->getTable()}.{$handler->getField()} has a composite
-                    primary key with {$primaryKeyCount} columns, but the database fetched {$valueCount} values.
-                    EOM);
-                }
-            }
+        if (is_array($primaryKeyValues) === false) {
+            throw new Exceptions\CompositePrimaryKeyError(<<<EOM
+                The configuration file indicates {$handler->getTable()}.{$handler->getField()} has a composite
+                primary key. but the database did not return an array ({$primaryKeyValues}).
+                EOM);
+        }
 
-            $this->database->update(
-                $handler->getTable(),
-                $handler->getField(),
-                $handler->handle(),
-                $primaryKeyValues,
-                $handler->getPrimaryKey(),
-            );
+        $primaryKeyCount = $primaryKey->count();
+        $valueCount = count($primaryKeyValues);
+
+        if ($primaryKeyCount !== $valueCount) {
+            throw new Exceptions\CompositePrimaryKeyError(<<<EOM
+                The configuration file indicates {$handler->getTable()}.{$handler->getField()} has a composite
+                primary key with {$primaryKeyCount} columns, but the database fetched {$valueCount} values.
+                EOM);
         }
     }
 }

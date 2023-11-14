@@ -1,12 +1,12 @@
 <?php
 
-namespace ClntDev\Scrubber\Handlers;
+namespace ClntDev\Scrubber\DataHandlers;
 
 use RuntimeException;
 
 class IntegerHandler extends Handler
 {
-    public function handle(): ?int
+    public function getValue(): ?int
     {
         if (is_numeric($this->input) === false) {
             throw new RuntimeException(
