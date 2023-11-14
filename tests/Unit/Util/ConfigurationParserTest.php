@@ -2,10 +2,13 @@
 
 namespace ClntDev\Scrubber\Tests\Unit\Util;
 
+use ClntDev\Scrubber\Contracts\ScrubHandler;
+use ClntDev\Scrubber\Exceptions\HandlerNotFound;
 use ClntDev\Scrubber\Exceptions\ValueNotFound;
-use ClntDev\Scrubber\Handlers\CallableHandler;
-use ClntDev\Scrubber\Handlers\FakerHandler;
-use ClntDev\Scrubber\Handlers\StringHandler;
+use ClntDev\Scrubber\DataHandlers\CallableHandler;
+use ClntDev\Scrubber\DataHandlers\FakerHandler;
+use ClntDev\Scrubber\DataHandlers\StringHandler;
+use ClntDev\Scrubber\ScrubHandlers\Update;
 use ClntDev\Scrubber\Tests\TestCase;
 use ClntDev\Scrubber\Util\ConfigurationParser;
 
@@ -29,9 +32,21 @@ class ConfigurationParserTest extends TestCase
     /** @test */
     public function it_can_parse_the_test_config_into_the_expected_handlers(): void
     {
+        /** @var ScrubHandler[] $result */
         $result = $this->parser->parse();
 
-        $expectedHandlers = [
+        $expectedScrubHandlers = [
+            Update::class,
+            Update::class,
+            Update::class,
+            Update::class,
+            Update::class,
+            Update::class,
+            Update::class,
+            Update::class,
+        ];
+
+        $expectedDataHandlers = [
             FakerHandler::class,
             FakerHandler::class,
             FakerHandler::class,
@@ -44,8 +59,9 @@ class ConfigurationParserTest extends TestCase
 
         $this->assertCount(9, $result);
 
-        for ($i = 0, $iMax = count($expectedHandlers); $i < $iMax; $i++) { //phpcs:ignore
-            $this->assertInstanceOf($expectedHandlers[$i], $result[$i]);
+        for ($i = 0, $iMax = count($expectedScrubHandlers); $i < $iMax; $i++) { //phpcs:ignore
+            $this->assertInstanceOf($expectedScrubHandlers[$i], $result[$i]);
+            $this->assertInstanceOf($expectedDataHandlers[$i], $result[$i]->getDataHandler());
         }
     }
 
@@ -58,11 +74,11 @@ class ConfigurationParserTest extends TestCase
     }
 
     /** @test */
-    public function it_throws_a_value_not_found_exception_if_the_value_key_is_not_defined(): void
+    public function it_throws_a_handler_not_found_exception_if_the_value_key_is_not_defined(): void
     {
         $this->parser = ConfigurationParser::make(__DIR__ . '/../../Support/config-invalid.php');
 
-        $this->expectException(ValueNotFound::class);
+        $this->expectException(HandlerNotFound::class);
 
         $this->parser->parse();
     }

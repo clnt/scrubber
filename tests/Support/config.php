@@ -1,6 +1,6 @@
 <?php
 
-use ClntDev\Scrubber\Handlers\FakerHandler;
+use ClntDev\Scrubber\DataHandlers\FakerHandler;
 
 return [
     'users' => [

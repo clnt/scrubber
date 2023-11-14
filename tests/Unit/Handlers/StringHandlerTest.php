@@ -2,7 +2,7 @@
 
 namespace ClntDev\Scrubber\Tests\Handlers;
 
-use ClntDev\Scrubber\Handlers\StringHandler;
+use ClntDev\Scrubber\DataHandlers\StringHandler;
 use ClntDev\Scrubber\Tests\TestCase;
 use Throwable;
 
@@ -13,7 +13,7 @@ class StringHandlerTest extends TestCase
     {
         $handler = $this->handlerFactory->create(StringHandler::class, 1);
 
-        $this->assertEquals('1', $handler->handle());
+        $this->assertEquals('1', $handler->getValue());
     }
 
     /** @test */
@@ -22,7 +22,7 @@ class StringHandlerTest extends TestCase
         $handler = $this->handlerFactory->create(StringHandler::class, ['one', 'two']);
 
         try {
-            $handler->handle();
+            $handler->getValue();
         } catch (Throwable $exception) {
             $this->assertEquals('StringHandler input is not stringable, array given', $exception->getMessage());
             return;

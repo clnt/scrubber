@@ -2,7 +2,7 @@
 
 namespace ClntDev\Scrubber\Tests\Handlers;
 
-use ClntDev\Scrubber\Handlers\ArrayHandler;
+use ClntDev\Scrubber\DataHandlers\ArrayHandler;
 use ClntDev\Scrubber\Tests\TestCase;
 use stdClass;
 use Throwable;
@@ -14,7 +14,7 @@ class ArrayHandlerTest extends TestCase
     {
         $handler = $this->handlerFactory->create(ArrayHandler::class, ['one', 'two']);
 
-        $this->assertEquals(json_encode(['one', 'two'], JSON_THROW_ON_ERROR), $handler->handle());
+        $this->assertEquals(json_encode(['one', 'two'], JSON_THROW_ON_ERROR), $handler->getValue());
     }
 
     /** @test */
@@ -23,7 +23,7 @@ class ArrayHandlerTest extends TestCase
         $handler = $this->handlerFactory->create(ArrayHandler::class, 'string');
 
         try {
-             $handler->handle();
+             $handler->getValue();
         } catch (Throwable $exception) {
             $this->assertEquals('ArrayHandler input is not an array, string given', $exception->getMessage());
             return;

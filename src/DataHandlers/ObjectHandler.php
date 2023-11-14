@@ -1,12 +1,12 @@
 <?php
 
-namespace ClntDev\Scrubber\Handlers;
+namespace ClntDev\Scrubber\DataHandlers;
 
 use RuntimeException;
 
 class ObjectHandler extends Handler
 {
-    public function handle(): ?string
+    public function getValue(): ?string
     {
         if (is_object($this->input) === false) {
             throw new RuntimeException('CallableHandler input is not an object');

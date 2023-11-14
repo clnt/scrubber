@@ -29,7 +29,7 @@ Here is an example configuration used in the unit tests:
 ```php
 <?php
 
-use ClntDev\Scrubber\Handlers\FakerHandler;
+use ClntDev\Scrubber\DataHandlers\FakerHandler;
 
 return [
     'users' => [

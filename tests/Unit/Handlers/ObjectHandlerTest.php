@@ -2,7 +2,7 @@
 
 namespace ClntDev\Scrubber\Tests\Handlers;
 
-use ClntDev\Scrubber\Handlers\ObjectHandler;
+use ClntDev\Scrubber\DataHandlers\ObjectHandler;
 use ClntDev\Scrubber\Tests\Support\Fakes\CallableTestObject;
 use ClntDev\Scrubber\Tests\Support\Fakes\HandleTestObject;
 use ClntDev\Scrubber\Tests\Support\Fakes\InvalidTestObject;
@@ -17,7 +17,7 @@ class ObjectHandlerTest extends TestCase
     {
         $handler = $this->handlerFactory->create(ObjectHandler::class, new HandleTestObject);
 
-        $this->assertEquals('handle', $handler->handle());
+        $this->assertEquals('handle', $handler->getValue());
     }
 
     /** @test */
@@ -25,7 +25,7 @@ class ObjectHandlerTest extends TestCase
     {
         $handler = $this->handlerFactory->create(ObjectHandler::class, new InvokeTestObject);
 
-        $this->assertEquals('__invoke', $handler->handle());
+        $this->assertEquals('__invoke', $handler->getValue());
     }
 
     /** @test */
@@ -33,7 +33,7 @@ class ObjectHandlerTest extends TestCase
     {
         $handler = $this->handlerFactory->create(ObjectHandler::class, new CallableTestObject);
 
-        $this->assertEquals('callable', $handler->handle());
+        $this->assertEquals('callable', $handler->getValue());
     }
 
     /** @test */
@@ -42,7 +42,7 @@ class ObjectHandlerTest extends TestCase
         $handler = $this->handlerFactory->create(ObjectHandler::class, ['one', 'two']);
 
         try {
-            $handler->handle();
+            $handler->getValue();
         } catch (Throwable $exception) {
             $this->assertEquals('CallableHandler input is not an object', $exception->getMessage());
             return;
@@ -57,7 +57,7 @@ class ObjectHandlerTest extends TestCase
         $handler = $this->handlerFactory->create(ObjectHandler::class, new InvalidTestObject);
 
         try {
-            $handler->handle();
+            $handler->getValue();
         } catch (Throwable $exception) {
             $this->assertEquals(
                 'CallableHandler __invoke or handle method not found on '

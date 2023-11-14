@@ -3,11 +3,15 @@
 namespace ClntDev\Scrubber\Tests\Support\Fakes;
 
 use ClntDev\Scrubber\Contracts\DatabaseKey;
-use ClntDev\Scrubber\Contracts\DatabaseUpdate;
+use ClntDev\Scrubber\Contracts\DatabaseHandler;
 
-class Database implements DatabaseUpdate
+class Database implements DatabaseHandler
 {
-    public array $entries;
+    public array $entries = [];
+
+    public array $deletedEntries = [];
+
+    public array $truncatedEntries = [];
 
     public function __construct()
     {
@@ -39,6 +43,33 @@ class Database implements DatabaseUpdate
             'value' => $value,
             'primaryKeyValue' => $primaryKeyValue,
             'primaryKey' => $primaryKey->getNames(),
+        ];
+
+        return true;
+    }
+
+    public function delete(
+        string $table,
+        string $field,
+        string $value,
+        array|int|string $primaryKeyValue,
+        DatabaseKey $primaryKey
+    ): bool {
+        $this->deletedEntries[] = [
+            'table' => $table,
+            'field' => $field,
+            'value' => $value,
+            'primaryKeyValue' => $primaryKeyValue,
+            'primaryKey' => $primaryKey->getNames(),
+        ];
+
+        return true;
+    }
+
+    public function truncate(string $table): bool
+    {
+        $this->truncatedEntries[] = [
+            'table' => $table,
         ];
 
         return true;

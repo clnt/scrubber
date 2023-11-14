@@ -2,7 +2,7 @@
 
 namespace ClntDev\Scrubber\Tests\Handlers;
 
-use ClntDev\Scrubber\Handlers\FakerHandler;
+use ClntDev\Scrubber\DataHandlers\FakerHandler;
 use ClntDev\Scrubber\Tests\TestCase;
 use Faker\Factory as Faker;
 use Faker\Generator as FakerGenerator;
@@ -25,7 +25,7 @@ class FakerHandlerTest extends TestCase
     {
         $handler = $this->handlerFactory->create(FakerHandler::class, 'faker.sentence');
 
-        $this->assertNotEmpty($handler->handle());
+        $this->assertNotEmpty($handler->getValue());
     }
 
     /** @test */
@@ -34,7 +34,7 @@ class FakerHandlerTest extends TestCase
         $handler = $this->handlerFactory->create(FakerHandler::class, 'fakerinvalid.string');
 
         try {
-            $handler->handle();
+            $handler->getValue();
         } catch (Throwable $exception) {
             $this->assertEquals('FakerHandler invalid faker input format given', $exception->getMessage());
             return;

@@ -2,7 +2,7 @@
 
 namespace ClntDev\Scrubber\Tests\Handlers;
 
-use ClntDev\Scrubber\Handlers\CallableHandler;
+use ClntDev\Scrubber\DataHandlers\CallableHandler;
 use ClntDev\Scrubber\Tests\TestCase;
 use Closure;
 use stdClass;
@@ -24,7 +24,7 @@ class CallableHandlerTest extends TestCase
     {
         $handler = $this->handlerFactory->create(CallableHandler::class, $this->callable);
 
-        $this->assertEquals('Test Callable', $handler->handle());
+        $this->assertEquals('Test Callable', $handler->getValue());
     }
 
     /** @test */
@@ -33,7 +33,7 @@ class CallableHandlerTest extends TestCase
         $handler = $this->handlerFactory->create(CallableHandler::class, ['one', 'two']);
 
         try {
-            $handler->handle();
+            $handler->getValue();
         } catch (Throwable $exception) {
             $this->assertEquals('CallableHandler input is not callable', $exception->getMessage());
             return;

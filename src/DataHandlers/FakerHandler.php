@@ -1,12 +1,12 @@
 <?php
 
-namespace ClntDev\Scrubber\Handlers;
+namespace ClntDev\Scrubber\DataHandlers;
 
 use RuntimeException;
 
 class FakerHandler extends Handler
 {
-    public function handle(): ?string
+    public function getValue(): ?string
     {
         if (str_contains($this->input, 'faker.') === false) {
             throw new RuntimeException('FakerHandler invalid faker input format given');
